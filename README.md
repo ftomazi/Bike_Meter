@@ -3,12 +3,12 @@ Complete ciclocomputer to use in bike home trainer speed range power cadence tim
 
 Resume:
 
-I needed meassuare a lot os infos about my bike home training, but is very expensive a complete home trainer.
+I wanted to measure a lot of information on my bike home training, but is very expensive a complete home trainer.
 I a bought a basic home trainer and development this app.
 
 How this sistem work.
 
-I use an ESP8266 built in wifi connection and driver to e-paper 2.9 inch color waveshare, infos are showed in real time (rate update minimum is 16s) to biker while ride in your home, also send a complete infos via wifi conection to some server in cloud.
+I used an ESP8266 built in wifi connection and driver to e-paper 2.9 inch color waveshare, infos are showed in real time (rate update minimum is 16s) to biker while ride in your home, also send a complete infos via wifi conection to some server in cloud.
 
 Steps to work
 
