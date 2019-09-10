@@ -28,6 +28,7 @@ double oldSpeed;
 float refreshDisplayMillis;
 float oldMillisSerial;
 double oldSpeedMillis;
+double oldCadenceMillis;
 int acuRev;
 int oldAcuRev;
 int cadence;
@@ -44,9 +45,10 @@ bool wifi;
 
 // ports
 int speedPortPin = 0;
-int cadencePortPin = 2;
+int cadencePortPin = 5;
 
 void ICACHE_RAM_ATTR handleInterrupt();
+void ICACHE_RAM_ATTR handleInterruptCadence();
 
 
 void setup() {
@@ -54,6 +56,8 @@ void setup() {
     pinMode(speedPortPin, INPUT_PULLUP);
  //   pinMode(LED, OUTPUT);
     attachInterrupt(digitalPinToInterrupt(speedPortPin), handleInterrupt, RISING);  
+    attachInterrupt(digitalPinToInterrupt(cadencePortPin), handleInterruptCadence, RISING);  
+
 
 // init vars
 rev=0;
@@ -63,6 +67,7 @@ oldSpeed=0;
 refreshDisplayMillis=0;
 oldMillisSerial=0;
 oldSpeedMillis=0;
+oldCadenceMillis=0;
 acuRev=0;
 oldAcuRev=0;
 cadence=0;
@@ -148,8 +153,11 @@ if ((millis() - oldMillisSerial) > 3000){
       ledOn = true;
     }
 
+  if (wifi)
+  {
     sendData();
-
+  }
+  
     oldMillisSerial = millis(); 
     oldAcuRev = acuRev;
 }
@@ -180,6 +188,13 @@ void handleInterrupt()
   
     rev = 0;    
     oldSpeedMillis = millis();  
+}
+
+void handleInterruptCadence()
+{
+  double difMillis = (millis() - oldCadenceMillis);
+  cadence = (1 / (difMillis/1000)) * 60;
+  oldCadenceMillis = millis();  
 }
 
 void printDisplay()
@@ -245,16 +260,28 @@ void printDisplay()
     paint.DrawStringAt(0, 2, pPower, &Font20, COLORED);
     epd.SetPartialWindowBlack(paint.GetImage(), 0, 164, paint.GetWidth(), paint.GetHeight());
 
+ // Cadence
+    paint.Clear(UNCOLORED);
+    paint.DrawStringAt(25, 2, "Cadence", &Font16, COLORED);
+    epd.SetPartialWindowBlack(paint.GetImage(), 0, 186, paint.GetWidth(), paint.GetHeight());
+  char sCad[] = "0";
+  String strCad = String(cadence);
+  strCad.toCharArray(sCad, 3);
+    paint.Clear(UNCOLORED);
+    paint.DrawStringAt(55, 2, sCad, &Font24, COLORED);
+    epd.SetPartialWindowBlack(paint.GetImage(), 0, 200, paint.GetWidth(), paint.GetHeight());  
+  
+  
   // LCD - Timer
     paint.Clear(UNCOLORED);
     paint.DrawStringAt(35, 2, "Timer", &Font16, COLORED);
-    epd.SetPartialWindowBlack(paint.GetImage(), 0, 194, paint.GetWidth(), paint.GetHeight());
+    epd.SetPartialWindowBlack(paint.GetImage(), 0, 232, paint.GetWidth(), paint.GetHeight());
   char sTimer[] = "0:00.0";
   String strTime = String(acuTime/60) + " Min";
   strTime.toCharArray(sTimer, 11);
     paint.Clear(UNCOLORED);
     paint.DrawStringAt(0, 2, sTimer, &Font20, COLORED);
-    epd.SetPartialWindowBlack(paint.GetImage(), 0, 208, paint.GetWidth(), paint.GetHeight());
+    epd.SetPartialWindowBlack(paint.GetImage(), 0, 236, paint.GetWidth(), paint.GetHeight());
 
   //Escreve LCD e coloca em sleep
     epd.DisplayFrame();
