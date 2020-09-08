@@ -296,8 +296,9 @@ void printDisplay()
 
 void calcPower(float speedkph)
 {
-  float speedMile = speed / 1.6;  
-  double powerspeed = 1;
+  float speedMile = speed / 1.6; 
+  // fator de correção da potencia 
+  double powerspeed = 1.25;
   double level = 1;
 
   if (speedMile > 1 && speedMile < 60)
